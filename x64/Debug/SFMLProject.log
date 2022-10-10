@@ -1,16 +1,65 @@
 ﻿  Game.cpp
-D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(76,11): warning C4244: 'initializing': conversion from 'T' to 'float', possible loss of data
-          with
-          [
-              T=unsigned int
-          ]
 D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(77,11): warning C4244: 'initializing': conversion from 'T' to 'float', possible loss of data
           with
           [
               T=unsigned int
           ]
-D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(283,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(283,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(289,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(289,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(78,11): warning C4244: 'initializing': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(245,24): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(246,61): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(247,64): warning C4244: 'argument': conversion from 'float' to 'sf::Uint8', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(321,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(321,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(327,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(327,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xutility(135,72): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xutility(134): message : see reference to function template instantiation '_Ty *std::construct_at<_Ty,float,void>(_Ty *const ,float &&) noexcept(<expr>)' being compiled
+          with
+          [
+              _Ty=CLifespan
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\memory(2006): message : see reference to function template instantiation 'void std::_Construct_in_place<_Ty,float>(_Ty &,float &&) noexcept(false)' being compiled
+          with
+          [
+              _Ty=CLifespan
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\memory(2725): message : see reference to function template instantiation 'std::_Ref_count_obj2<_Ty>::_Ref_count_obj2<float>(float &&)' being compiled
+          with
+          [
+              _Ty=CLifespan
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\memory(2726): message : see reference to function template instantiation 'std::_Ref_count_obj2<_Ty>::_Ref_count_obj2<float>(float &&)' being compiled
+          with
+          [
+              _Ty=CLifespan
+          ]
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(128): message : see reference to function template instantiation 'std::shared_ptr<CLifespan> std::make_shared<CLifespan,float>(float &&)' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xutility(149,77): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xutility(136,69): warning C4244: 'argument': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=float
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xutility(142): message : see reference to function template instantiation '_Ty *std::construct_at<_Ty,float,void>(_Ty *const ,float &&) noexcept(false)' being compiled
+          with
+          [
+              _Ty=CLifespan
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\memory(2006): message : see reference to function template instantiation 'void std::_Construct_in_place<_Ty,float>(_Ty &,float &&) noexcept(false)' being compiled
+          with
+          [
+              _Ty=CLifespan
+          ]
   SFMLProject.vcxproj -> D:\DATA\Max\Documents\CPP\SFMLProject\x64\Debug\SFMLProject.exe

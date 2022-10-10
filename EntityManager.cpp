@@ -4,13 +4,21 @@
 #include <string>
 #include <map>
 #include <memory>
+#include <algorithm>
+#include <iostream>
 
 #include "EntityManager.h"
 #include "Entity.h"
 
 void EntityManager::removeDeadEntities(EntityVec & vec)
 {
-	std::remove_if(vec.begin(), vec.end(), [](auto e) { return !e->getStatus(); }); //! Keep an eye on this
+	for (int i = 0; i < vec.size(); i++)
+	{
+		if (!vec[i]->getStatus())
+		{
+			vec.erase(vec.begin() + i);
+		}
+	}
 }
 
 // called at beginning of each fram by game engine
@@ -21,15 +29,16 @@ void EntityManager::update()
 	{
 		_entities.push_back(e);								     // add to full entity list
 		_entityMap[e->tag()].push_back(e);						 // add to correct entity group
+		std::cout << "Entity created" << std::endl;
 	}
 
 	_toAdd.clear();												// clear the waiting room now that they've all been added
 
 	removeDeadEntities(_entities);
 
-	for (auto& kv : _entityMap) // TODO: figure this out
+	for (auto& [tag, entities]:_entityMap)
 	{
-		removeDeadEntities(kv.second);
+		removeDeadEntities(entities);
 	}
 }
 

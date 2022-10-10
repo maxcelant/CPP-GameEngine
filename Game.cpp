@@ -34,6 +34,7 @@ void Game::run()
 			sMovement();
 			sCollision();
 			sUserInput();
+			sLifespan();
 		}
 
 		sRender();
@@ -64,7 +65,7 @@ void Game::spawnPlayer()
 	entity->cInput = std::make_shared<CInput>();
 
 	// add wall collision
-	//entity->cCollision = std::make_shared<CCollision>(32.0f);
+	entity->cCollision = std::make_shared<CCollision>(32.0f);
 
 	_player = entity; // set this entity to our player
 }
@@ -76,7 +77,7 @@ void Game::spawnEnemy()
 	float ex = rand() % _window.getSize().x; // give it a min and max thats equal to the radius of the object
 	float ey = rand() % _window.getSize().y; // give it a min and max thats equal to the radius of the object
 
-	entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(3.0f, 3.0f), 5.0f);
+	entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(7.0f, 7.0f), 5.0f);
 	entity->cShape = std::make_shared<CShape>(18.0f, 6, sf::Color(0, 0, 255), sf::Color(255, 255, 255), 4.0f);
 	entity->cCollision = std::make_shared<CCollision>(18.0f);
 
@@ -119,6 +120,12 @@ void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos)
 	bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x, entity->cTransform->pos.y), Vec2(normalizedVec.x, normalizedVec.y), angle);
 
 	bullet->cShape = std::make_shared<CShape>(10.0f, 8, sf::Color(210, 135, 255), sf::Color(255, 255, 255), 2.0f);
+	
+	// give the bullet collision
+	bullet->cCollision = std::make_shared<CCollision>(11.0f);
+
+	// bullet lasts 80 frames
+	bullet->cLifespan = std::make_shared<CLifespan>(60.0f); 
 }
 
 void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
@@ -194,12 +201,32 @@ void Game::sCollision()
 				e->cTransform->velocity.y *= -1.0; // inverse y direction
 			}
 		}
+
+	}
+
+	// enemy-bullet collision detection
+	for (auto& e : _entityManager.getEntities("enemy"))
+	{
+		for (auto& b : _entityManager.getEntities("bullet"))
+		{
+			// if bullet collides with enemy, destroy both
+			// get length between them
+			Vec2 D = b->cTransform->pos.length(e->cTransform->pos);
+			
+			// see if distance between them is less than their summed radiuses
+			if (((D.x * D.x) + (D.y * D.y)) < ((b->cCollision->radius + e->cCollision->radius) * (b->cCollision->radius + e->cCollision->radius)))
+			{
+				std::cout << "BAZINGA\n";
+				b->destroy();
+				e->destroy();
+			}
+		}
 	}
 }
 
 void Game::sEnemySpawner()
 {
-	if (_currentFrame - _lastEnemySpawnTime > 180.0f) // spawns every 3 seconds
+	if (_currentFrame - _lastEnemySpawnTime > 90.0f) // spawns every 90 frames
 	{
 		spawnEnemy();
 	}
@@ -207,14 +234,25 @@ void Game::sEnemySpawner()
 
 void Game::sLifespan()
 {
-	// implement all lifespan functionality
-	// for all entities
-	//		if entity has no lifespan component, skip it
-	//		if entity has > - remaining lifespan, subtract 1
-	//		if entity has lifespan and is alive
-	//			scale its alpha channel properly
-	//		if it has lifespan and its time is up
-	//			destroy the entity
+	for (auto& e : _entityManager.getEntities())
+	{
+		if (e->cLifespan != NULL)
+		{
+			e->cLifespan->remaining -= 1; // remove a tick from the entities lifespan
+			
+			if (e->cLifespan->remaining > 0)
+			{
+				float transparency = (e->cLifespan->remaining * 255) / e->cLifespan->total;
+				e->cShape->circle.setFillColor(sf::Color(255, 255, 255, transparency));
+				e->cShape->circle.setOutlineColor(sf::Color(255, 255, 255, transparency));
+			}
+
+			if (e->cLifespan->remaining < 0)// if no more lifespan, destroy it
+			{
+				e->destroy();
+			}
+		}
+	}
 }
 
 void Game::sUserInput()
