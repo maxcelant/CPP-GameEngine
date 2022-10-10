@@ -1,0 +1,16 @@
+﻿  Game.cpp
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(76,11): warning C4244: 'initializing': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(77,11): warning C4244: 'initializing': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(283,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(283,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(289,69): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\DATA\Max\Documents\CPP\SFMLProject\SFMLProject\Game.cpp(289,48): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  SFMLProject.vcxproj -> D:\DATA\Max\Documents\CPP\SFMLProject\x64\Debug\SFMLProject.exe
