@@ -28,6 +28,11 @@ void Game::run()
 	{
 		_entityManager.update();
 
+		if (!_player->getStatus())
+		{
+			spawnPlayer();
+		}
+
 		if (!_paused) // what to do when we aren't paused
 		{
 			sEnemySpawner();
@@ -74,11 +79,20 @@ void Game::spawnEnemy()
 {
 	// create enemy similar to player
 	auto entity = _entityManager.addEntity("enemy");
-	float ex = rand() % _window.getSize().x; // give it a min and max thats equal to the radius of the object
-	float ey = rand() % _window.getSize().y; // give it a min and max thats equal to the radius of the object
 
-	entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(7.0f, 7.0f), 5.0f);
-	entity->cShape = std::make_shared<CShape>(18.0f, 6, sf::Color(0, 0, 255), sf::Color(255, 255, 255), 4.0f);
+	int radius = 22, minSides = 3, maxSides = 10; // min and max sides of the polygon
+
+	float randomSides = minSides + (rand() % (1 + maxSides - minSides)); // choose random polygon [3-10]
+
+	float ex = radius + (rand() % (1 + _window.getSize().x - radius)); // give it a min and max thats equal to the radius of the object
+	float ey = radius + (rand() % (1 + _window.getSize().y - radius)); // give it a min and max thats equal to the radius of the object
+
+	float r = rand() % 255, g = rand() % 255, b = rand() % 255;
+	float outline_r = rand() % 255, outline_g = rand() % 255, outline_b = rand() % 255;
+	float speed = 4 + rand() % (1 + 4);
+
+	entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(speed, speed), 5.0f);
+	entity->cShape = std::make_shared<CShape>(radius, randomSides, sf::Color(r, g, b), sf::Color(outline_r, outline_g, outline_b), 4.0f);
 	entity->cCollision = std::make_shared<CCollision>(18.0f);
 
 	// record when the most recent enemy was spawned
@@ -87,12 +101,30 @@ void Game::spawnEnemy()
 
 void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 {
-	// spawn small enemies at the locationm of the input enemy e
+	// get origin of polygon
+	Vec2 origin = e->cTransform->pos;
+	int sides = e->cShape->circle.getPointCount();
+	float angle = 360.0f / sides;
+	float radius = e->cShape->circle.getRadius();
+	float speed = 3.0f;
+	// in order to get the trajectory angle aka n.x and n.y, we will need to do math!
 
-	// when we create the smaller enemy, we have to read values of the original enemy
-	// - spawn a number of small enemies equal to the vertices of the og enemy
-	// - set each small enemy to the same color as the origianl, half the size
-	// - small enemies are worth double points of the original enemy
+	for (int i = 0; i < sides; i++)
+	{
+		// get current trajectory angle
+		float currentAngle = angle * i;
+
+		// get the d.x and d.y and store them
+		Vec2 vec = { radius * cosf(currentAngle), radius * sinf(currentAngle) };
+		
+		// normalize vector
+		vec = vec.normalize(radius);
+		auto entity = _entityManager.addEntity("enemy");
+		entity->cTransform = std::make_shared<CTransform>(Vec2(e->cTransform->pos.x, e->cTransform->pos.y), (vec * speed), 0.0f);
+		entity->cShape = std::make_shared<CShape>(e->cShape->circle.getRadius() / 2.0f, sides, sf::Color(255,255,255), sf::Color(255, 255, 255), 4.0f);
+		//entity->cCollision = std::make_shared<CCollision>(18.0f);
+		entity->cLifespan = std::make_shared<CLifespan>(30.0f);
+	}
 }
 
 void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos)
@@ -113,24 +145,46 @@ void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos)
 	float angle = normalizedVec.theta();
 
 	// then multiply by speed vector
-	normalizedVec.x *= 10.0; 
-	normalizedVec.y *= 10.0;
+	float speed = 20.0f;
 
 	// spawn the bullet at the position of the player entity
-	bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x, entity->cTransform->pos.y), Vec2(normalizedVec.x, normalizedVec.y), angle);
+	bullet->cTransform = std::make_shared<CTransform>(Vec2(entity->cTransform->pos.x, entity->cTransform->pos.y), (Vec2(normalizedVec.x, normalizedVec.y) * speed), 1.0);
 
 	bullet->cShape = std::make_shared<CShape>(10.0f, 8, sf::Color(210, 135, 255), sf::Color(255, 255, 255), 2.0f);
 	
 	// give the bullet collision
 	bullet->cCollision = std::make_shared<CCollision>(11.0f);
 
-	// bullet lasts 80 frames
+	// bullet lasts 60 frames
 	bullet->cLifespan = std::make_shared<CLifespan>(60.0f); 
 }
 
-void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
+void Game::spawnSpecialWeapon(std::shared_ptr<Entity> e)
 {
+	// get origin of polygon
+	Vec2 origin = e->cTransform->pos;
+	int sides = e->cShape->circle.getPointCount();
+	float angle = 360.0f / sides;
+	float radius = e->cShape->circle.getRadius();
+	float speed = 5.0f;
+	// in order to get the trajectory angle aka n.x and n.y, we will need to do math!
 
+	for (int i = 0; i < sides; i++)
+	{
+		// get current trajectory angle
+		float currentAngle = angle * i;
+
+		// get the d.x and d.y and store them
+		Vec2 vec = { radius * cosf(currentAngle), radius * sinf(currentAngle) };
+
+		// normalize vector
+		vec = vec.normalize(radius);
+		auto entity = _entityManager.addEntity("bullet");
+		entity->cTransform = std::make_shared<CTransform>(Vec2(e->cTransform->pos.x, e->cTransform->pos.y), (vec * speed), 0.0f);
+		entity->cShape = std::make_shared<CShape>(e->cShape->circle.getRadius() / 3.0f, sides, sf::Color::Red, sf::Color::Red, 2.0f);
+		entity->cCollision = std::make_shared<CCollision>(18.0f);
+		entity->cLifespan = std::make_shared<CLifespan>(30.0f);
+	}
 }
 
 void Game::sRender()
@@ -142,6 +196,7 @@ void Game::sRender()
 		e->cShape->circle.setPosition(e->cTransform->pos.x, e->cTransform->pos.y);
 
 		e->cTransform->angle += 1.0f;
+
 		e->cShape->circle.setRotation(e->cTransform->angle);
 
 		_window.draw(e->cShape->circle);
@@ -164,11 +219,11 @@ void Game::sMovement()
 	// player change directions
 	if (_player->cInput->up)
 	{
-		_player->cTransform->velocity.y = -5; // change this to speed later
+		_player->cTransform->velocity.y = -5; // TODO: change this to speed later
 	}
 	if (_player->cInput->down)
 	{
-		_player->cTransform->velocity.y = 5; // change this to speed later
+		_player->cTransform->velocity.y = 5; 
 	}
 	if (_player->cInput->left)
 	{
@@ -209,16 +264,37 @@ void Game::sCollision()
 	{
 		for (auto& b : _entityManager.getEntities("bullet"))
 		{
-			// if bullet collides with enemy, destroy both
-			// get length between them
-			Vec2 D = b->cTransform->pos.length(e->cTransform->pos);
-			
-			// see if distance between them is less than their summed radiuses
-			if (((D.x * D.x) + (D.y * D.y)) < ((b->cCollision->radius + e->cCollision->radius) * (b->cCollision->radius + e->cCollision->radius)))
+			if (e->cCollision != NULL)
 			{
-				std::cout << "BAZINGA\n";
-				b->destroy();
+				// if bullet collides with enemy, destroy both
+				// get length between them
+				Vec2 D = b->cTransform->pos.length(e->cTransform->pos);
+			
+				// see if distance between them is less than their summed radiuses
+				if (((D.x * D.x) + (D.y * D.y)) < ((b->cCollision->radius + e->cCollision->radius) * (b->cCollision->radius + e->cCollision->radius)))
+				{
+					b->destroy();
+					e->destroy();
+					spawnSmallEnemies(e);
+				}
+			}
+		}
+	}
+
+	// when an enemy runs into the player
+	for (auto& e : _entityManager.getEntities("enemy"))
+	{
+		if (e->cCollision != NULL)
+		{
+			Vec2 D = _player->cTransform->pos.length(e->cTransform->pos);
+
+			// see if distance between them is less than their summed radiuses
+			if (((D.x * D.x) + (D.y * D.y)) < ((_player->cCollision->radius + e->cCollision->radius) * (_player->cCollision->radius + e->cCollision->radius)))
+			{
 				e->destroy();
+				_player->destroy();
+				spawnSmallEnemies(e);
+				spawnSmallEnemies(_player);
 			}
 		}
 	}
@@ -226,7 +302,7 @@ void Game::sCollision()
 
 void Game::sEnemySpawner()
 {
-	if (_currentFrame - _lastEnemySpawnTime > 90.0f) // spawns every 90 frames
+	if (_currentFrame - _lastEnemySpawnTime > 70.0f) // spawns every 70 frames
 	{
 		spawnEnemy();
 	}
@@ -324,7 +400,7 @@ void Game::sUserInput()
 			if (event.mouseButton.button == sf::Mouse::Right)
 			{
 				std::cout << "Right mouse clicked at (" << event.mouseButton.x << ", " << event.mouseButton.y << ")\n";
-				spawnBullet(_player, Vec2(event.mouseButton.x, event.mouseButton.y));
+				spawnSpecialWeapon(_player);
 			}
 		}
 	}
